@@ -3,13 +3,13 @@
 
 #include <Element/Element.h>
 
-namespace cassebrique
+namespace breakout
 {
-	class Balle : public Element {
+	class Ball : public Element {
 		public:
-			Balle() : Element(Vecteur<int>(10, 9)) {}
-			Balle(const Vecteur<int> &v) : Element(v) {}
-			ElementType type() const override { return ElementType::BALLE; }
+			Ball() : Element(Vec2D<int>(10, 9)) {}
+			Ball(const Vec2D<int> &v) : Element(v) {}
+			ElementType type() const override { return ElementType::BALL; }
 
 	};
 

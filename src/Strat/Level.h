@@ -2,29 +2,29 @@
 
 #include <list>
 
-#include <Element/Brique.h>
+#include <Element/Brick.h>
 
-namespace cassebrique {
+namespace breakout {
 
-	class Niveau {
+	class Level {
 			using element_t = std::list<Element*>;
 		public:
 			using iterator = element_t::iterator;
 
-			Niveau(int element_restants) : m_element_restants(element_restants) {}
+			Level(int element_restants) : m_element_restants(element_restants) {}
 
-			bool ajouter(Element &b) {
+			bool add(Element &b) {
 				m_element.push_back(&b);
 				return true;
 			}
 
-			bool detruire(Element &b) {
+			bool del(Element &b) {
 				m_element.remove(&b);
 				m_element_restants --;
 				return true;
 			}
 
-			bool estTermine() { return m_element_restants == 0; }
+			bool isEnding() { return m_element_restants == 0; }
 
 			/* iterateur sur les element */
 			iterator begin() { return m_element.begin(); }

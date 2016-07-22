@@ -2,34 +2,27 @@
 
 #include <math.h>
 
-namespace cassebrique
+namespace breakout
 {
 	/* template */
 
 	template <class T>
-	class Vecteur {
+	class Vec2D {
 		public:
-			Vecteur() : m_x(0), m_y(0) {}
-			Vecteur(T x, T y);
+			Vec2D() : m_x(0), m_y(0) {}
+			Vec2D(T x, T y);
 
-			void nouvellesCoordonnees(T x, T y);
+			void setCoord(T x, T y);
 
-			/* doit etre marqué const pour notifier que les
-			* données de l'objet ne seront pas modifiés */
-			/* utilisé pour l'opérateur de comparaison par
-			 * exemple */
-			void recupererCoordonnees(T &x, T &y) const;
+			void getCoord(T &x, T &y) const;
 
-			/* surcharge d'opérateur. liste des operateurs : http://en.cppreference.com/w/cpp/language/operators */
+			Vec2D<T>& operator+=(const Vec2D<T> &rhs);
+			Vec2D<T>& operator-=(const Vec2D<T> &rhs);
+			Vec2D<T>   operator+(const Vec2D<T> &rhs) const;
+			Vec2D<T>   operator-(const Vec2D<T> &rhs) const;
 
-			/* Quand le prototype de l'opérateur est déclaré dans la classe, il ne prend qu'un argument */
-			Vecteur<T>& operator+=(const Vecteur<T> &rhs);
-			Vecteur<T>& operator-=(const Vecteur<T> &rhs);
-			Vecteur<T> operator+(const Vecteur<T> &rhs) const;
-			Vecteur<T> operator-(const Vecteur<T> &rhs) const;
-
-			bool operator==(const Vecteur<T> &rhs) const;
-			bool operator!=(const Vecteur<T> &rhs) const;
+			bool operator==(const Vec2D<T> &rhs) const;
+			bool operator!=(const Vec2D<T> &rhs) const;
 
 		private:
 			T m_x;
@@ -37,10 +30,10 @@ namespace cassebrique
 	};
 
 	/* helper */
-	static inline Vecteur<int> VecteurDoubleVersInt(const Vecteur<double> &d) {
-		double x,y; d.recupererCoordonnees(x, y);
-		return Vecteur<int>(floor(x + 0.5), floor(y + 0.5)); }
+	static inline Vec2D<int> Vec2DDoubleToInt(const Vec2D<double> &d) {
+		double x,y; d.getCoord(x, y);
+		return Vec2D<int>(floor(x + 0.5), floor(y + 0.5)); }
 
-#include <Vecteur/Vecteur.tpp>
+#include <Geom/Vec2D.tpp>
 
 }

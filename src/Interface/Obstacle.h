@@ -2,13 +2,13 @@
 
 #include <array>
 
-namespace cassebrique
+namespace breakout
 {
-	enum class ObstacleResultat { INTACT, DETRUIT };
-	std::string ObstacleResultatVersString(ObstacleResultat r);
+	enum class ObstacleResult { UNBROKEN, BROKEN };
+	std::string ObstacleResultToString(ObstacleResult r);
 
 	class Obstacle {
 		public:
-			virtual ObstacleResultat collision() const = 0;
+			virtual ObstacleResult collision() const = 0;
 	};
 };

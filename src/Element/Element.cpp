@@ -1,15 +1,15 @@
 #include <Element/Element.h>
 
-using namespace cassebrique;
+using namespace breakout;
 
-Element::Element(const Vecteur<int> &p) : m_position(p) { };
+Element::Element(const Vec2D<int> &p) : m_position(p) { };
 
-void Element::nouvellePosition(const Vecteur<int> &p)
+void Element::setPosition(const Vec2D<int> &p)
 {
 	m_position = p;
 }
 
-Vecteur<int> Element::recupererPosition(void) const
+Vec2D<int> Element::getPosition(void) const
 {
 	return m_position;
 }

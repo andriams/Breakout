@@ -1,12 +1,12 @@
 
-#include <Physique/Physique2D.h>
+#include <Physic/Physic2D.h>
 
-using namespace cassebrique;
+using namespace breakout;
 
-bool Physique2D::mise_a_jour(SpriteObservable &obs)
+bool Physic2D::update(SpriteObservable &obs)
 {
 	Sprite &s = obs.sprite();
-	detruire(s);
-	return ajouter(s);
+	del(s);
+	return add(s);
 }
 

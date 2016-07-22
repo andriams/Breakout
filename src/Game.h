@@ -1,39 +1,38 @@
 #pragma once
 
-#include <Strat/Niveau.h>
-#include <Ecran/Ecran.h>
-#include <Physique/Physique2D.h>
-//#include <Ecran/SpriteCurses.h> /* XXX TODO generic */
-#include <Ecran/SpriteSDL.h> 
-#include <Vecteur/Vecteur.h>
-#include <Deplacement/Deplacement.h>
+#include <Strat/Level.h>
+#include <Screen/Screen.h>
+#include <Physic/Physic2D.h>
+#include <Screen/SpriteSDL.h> 
+#include <Geom/Vec2D.h>
+#include <Movement/Movement.h>
 
-namespace cassebrique {
+namespace breakout {
 
-	class Jeu {
+	class Game {
 		public:
-			Jeu(Ecran &ecran, Physique2D &physique) : m_ecran(ecran), m_physique(physique), m_jeu_en_cours(false) {}
-			bool demarrer(Niveau &niveau);
-			bool afficher();
+			Game(Screen &screen, Physic2D &physic) : m_screen(screen), m_physic(physic), m_pending(false) {}
+			bool start(Level &level);
+			bool show();
 
-			bool executer(Action action);
+			bool execute(Action action);
 		private:
 			bool collision(Sprite *rencontre);
 
-			Balle m_balle;
-			Canevas m_canevas;
-			Raquette m_raquette;
+			Ball m_ball;
+			Canvas m_canvas;
+			Racket m_racket;
 
-			Sprite *m_sprite_balle;
-			Sprite *m_sprite_canevas;
-			SpriteRaquette *m_sprite_raquette;
+			Sprite *m_sprite_ball;
+			Sprite *m_sprite_canvas;
+			SpriteRacket *m_sprite_racket;
 			std::list<Sprite*> m_sprites;
 
-			Ecran &m_ecran;
-			Physique2D &m_physique;
+			Screen &m_screen;
+			Physic2D &m_physic;
 
-			Niveau *m_niveau;
+			Level *m_level;
 			SpriteSDLFactory m_sprite_factory; 
-			bool m_jeu_en_cours;
+			bool m_pending;
 	};
 }

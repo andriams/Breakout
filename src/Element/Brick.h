@@ -2,31 +2,31 @@
 #pragma once
 
 #include <array>
-#include <Couleur/Couleur.h>
+#include <Color/Color.h>
 #include <Element/Element.h>
 #include <Interface/Obstacle.h>
 
-namespace cassebrique
+namespace breakout
 {
-	class Brique : public Element, private Obstacle {
+	class Brick : public Element, private Obstacle {
 		public:
-			Brique() :Element(Vecteur<int>(0, 0)){}
-			Brique(const Vecteur<int> &, Couleur);
+			Brick() :Element(Vec2D<int>(0, 0)){}
+			Brick(const Vec2D<int> &, Color);
 
-			Couleur recupererCouleur() const override { return m_couleur; }
+			Color getColor() const override { return m_color; }
 
-			ObstacleResultat collision() const override;
-			virtual ElementType type() const override { return ElementType::BRIQUE; }
+			ObstacleResult collision() const override;
+			virtual ElementType type() const override { return ElementType::BRICK; }
 
 		private:
-			Couleur m_couleur;
+			Color m_color;
 	};
 
-	class BriqueIncassable : public Brique {
+	class BrickUnbrokable : public Brick {
 		public:
-			BriqueIncassable(const Vecteur<int> &);
-			BriqueIncassable() :Brique(){};
-			ObstacleResultat collision() const override;
-			ElementType type() const override { return ElementType::BRIQUE_INCASSABLE; }
+			BrickUnbrokable(const Vec2D<int> &);
+			BrickUnbrokable() :Brick(){};
+			ObstacleResult collision() const override;
+			ElementType type() const override { return ElementType::BRICK_UNBROKABLE; }
 	};
 };

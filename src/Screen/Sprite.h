@@ -2,75 +2,74 @@
 
 #include <math.h>
 
-#include <Vecteur/Vecteur.h>
-#include <Element/Brique.h>
-#include <Element/Raquette.h>
-#include <Element/Balle.h>
-#include <Element/Canevas.h>
-#include <Ecran/Ecran.h>
-#include <Ecran/SpriteObservable.h>
+#include <Geom/Vec2D.h>
+#include <Element/Brick.h>
+#include <Element/Racket.h>
+#include <Element/Ball.h>
+#include <Element/Canvas.h>
+#include <Screen/Screen.h>
+#include <Screen/SpriteObservable.h>
 
-namespace cassebrique {
+namespace breakout {
 
 	class Sprite {
 		public:
-			Sprite(const Vecteur<double> &p, const Vecteur<int> &t, Element &e) : 
-				m_position(p), m_mouvement(Vecteur<double>(0,0)), m_taille(t), m_element(e) {}
+			Sprite(const Vec2D<double> &p, const Vec2D<int> &t, Element &e) : 
+				m_position(p), m_movement(Vec2D<double>(0,0)), m_size(t), m_element(e) {}
 			virtual ~Sprite() {}
 
-			/* taille du sprite */
-			void nouvelleTaille(const Vecteur<int> &taille) { m_taille = taille; }
-			Vecteur<int> recupererTaille() const { return m_taille; }
+			/* size of sprite */
+			void setSize(const Vec2D<int> &size) { m_size = size; }
+			Vec2D<int> getSize() const { return m_size; }
 
-			/* mouvement du sprite */
-			void nouveauMouvement(const Vecteur<double> &mouvement) { m_mouvement = mouvement; }
-			Vecteur<double> recupererMouvement() const { return m_mouvement; }
+			/* movement of sprite */
+			void setMovement(const Vec2D<double> &movement) { m_movement = movement; }
+			Vec2D<double> getMovement() const { return m_movement; }
 
 			/* position */
-			Vecteur<double> recupererPosition() const { return m_position; }
-			/* observé */
-			virtual void nouvellePosition(const Vecteur<double> &position) { m_position = position; }
-			virtual void deplacer(const Vecteur<double> &mouvement) { m_position += mouvement; }
+			Vec2D<double> getPosition() const { return m_position; }
+			virtual void setPosition(const Vec2D<double> &position) { m_position = position; }
+			virtual void move(const Vec2D<double> &mouvement) { m_position += mouvement; }
 
-			/* affichage, dépend de l'écran */
-			virtual bool afficher(Ecran &) = 0;
+			/* show on screern*/
+			virtual bool show(Screen &) = 0;
 
-			/* recupération de l'objet du jeu */
+			/* get element */
 			Element &element() { return m_element; }
 		protected:
-			Vecteur<double> m_position;
-			Vecteur<double> m_mouvement;
-			Vecteur<int> m_taille;
+			Vec2D<double> m_position;
+			Vec2D<double> m_movement;
+			Vec2D<int> m_size;
 			Element &m_element;
 	};
 
-	/* SpriteObservé est utilisé pour les objets suivis  */
-	class SpriteObserve : public Sprite, public SpriteObservable {
+	/* observed sprite used for tracked sprites */
+	class SpriteObserved : public Sprite, public SpriteObservable {
 		public:
-			SpriteObserve(SpriteObservateur &o,
-				const Vecteur<double> &p,
-				const Vecteur<int> &t,
+			SpriteObserved(SpriteObserver &o,
+				const Vec2D<double> &p,
+				const Vec2D<int> &t,
 				Element &r) : Sprite(p, t, r), SpriteObservable(o, *this) {}
 
 			/* observable */
-			void nouvellePosition(const Vecteur<double> &position) override {
+			void setPosition(const Vec2D<double> &position) override {
 				m_position = position;
-				mise_a_jour();
+				update();
 			}
 
-			void deplacer(const Vecteur<double> &mouvement) override {
+			void move(const Vec2D<double> &mouvement) override {
 				m_position += mouvement;
-				mise_a_jour();
+				update();
 			}
 	};
 
-	/* la raquette est observée */
-	class SpriteRaquette : public SpriteObserve {
+	/* the racket is observed */
+	class SpriteRacket : public SpriteObserved {
 		public:
-			SpriteRaquette(SpriteObservateur &o,
-				const Vecteur<double> &p,
-				const Vecteur<int> &t,
-				Element &r) : SpriteObserve(o, p, t, r) {}
+			SpriteRacket(SpriteObserver &o,
+				const Vec2D<double> &p,
+				const Vec2D<int> &t,
+				Element &r) : SpriteObserved(o, p, t, r) {}
 
 	};
 

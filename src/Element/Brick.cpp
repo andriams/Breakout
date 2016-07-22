@@ -1,10 +1,10 @@
-#include <Element/Brique.h>
+#include <Element/Brick.h>
 
-using namespace cassebrique;
+using namespace breakout;
 
-Brique::Brique(const Vecteur<int> &v, Couleur couleur) : Element(v), m_couleur(couleur) {}
-ObstacleResultat Brique::collision() const { return ObstacleResultat::DETRUIT; }
+Brick::Brick(const Vec2D<int> &v, Color color) : Element(v), m_color(color) {}
+ObstacleResult Brick::collision() const { return ObstacleResult::BROKEN; }
 
-BriqueIncassable::BriqueIncassable(const Vecteur<int> &v) : Brique(v, Couleur::ROUGE) {}
-ObstacleResultat BriqueIncassable::collision() const { return ObstacleResultat::INTACT; }
+BrickUnbrokable::BrickUnbrokable(const Vec2D<int> &v) : Brick(v, Color::RED) {}
+ObstacleResult BrickUnbrokable::collision() const { return ObstacleResult::UNBROKEN; }
 

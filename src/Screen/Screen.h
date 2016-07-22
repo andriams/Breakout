@@ -1,26 +1,26 @@
 #pragma once
 
-#include <Element/Brique.h>
-#include <Element/Balle.h>
-#include <Element/Raquette.h>
-#include <Element/Canevas.h>
+#include <Element/Brick.h>
+#include <Element/Ball.h>
+#include <Element/Racket.h>
+#include <Element/Canvas.h>
 
-#include <Couleur/Couleur.h>
+#include <Color/Color.h>
 
-namespace cassebrique {
+namespace breakout {
 
-	enum class Action { DROITE, GAUCHE, QUITTER, DEMARRER, AUCUNE };
+	enum class Action { RIGHT, LEFT, QUIT, START, NONE };
 	
-	class Ecran {
+	class Screen {
 	public:
-		Ecran() {};
-		virtual ~Ecran() {};
-		virtual bool effacer() = 0;
+		Screen() {};
+		virtual ~Screen() {};
+		virtual bool clear() = 0;
 		virtual void init() = 0;
-		virtual bool rafraichir() = 0;
-		virtual Action lireAction() = 0;
-		virtual bool recupererDimensions(int &x, int &y) const = 0;
-		virtual bool ajouterPixel(const Vecteur<int> &v, char pix, Couleur c) = 0;
+		virtual bool refresh() = 0;
+		virtual Action getAction() = 0;
+		virtual bool getDimensions(int &x, int &y) const = 0;
+		virtual bool addPixel(const Vec2D<int> &v, char pix, Color c) = 0;
 		virtual void* renderer() = 0;
 	};
 };

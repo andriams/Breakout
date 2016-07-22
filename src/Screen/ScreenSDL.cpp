@@ -1,22 +1,21 @@
-#include <Ecran/EcranSDL.h>
-#include <Ecran/SpriteSDL.h>
+#include <Screen/ScreenSDL.h>
+#include <Screen/SpriteSDL.h>
 #include <iostream>
 
-using namespace cassebrique;
+using namespace breakout;
 using namespace std;
 
-EcranSDL::EcranSDL()
+ScreenSDL::ScreenSDL()
 {
-	cout << "Affichage ecran" << endl;
 }
 
-void EcranSDL::init()
+void ScreenSDL::init()
 {
 	if (SDL_Init(SDL_INIT_VIDEO) != 0){
 		std::cout << "SDL_Init Error: " << SDL_GetError() << std::endl;
 	}
 
-	m_win = SDL_CreateWindow("Cassebrique_SDL", 100, 100, MAX_WIDTH, MAX_HEIGHT, SDL_WINDOW_SHOWN);
+	m_win = SDL_CreateWindow("BREAKOUT GAME", 100, 100, MAX_WIDTH, MAX_HEIGHT, SDL_WINDOW_SHOWN);
 	if (m_win == nullptr){
 		std::cout << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
 		SDL_Quit();
@@ -27,7 +26,7 @@ void EcranSDL::init()
 	SDL_RenderClear(m_renderer);
 }
 
-EcranSDL::~EcranSDL()
+ScreenSDL::~ScreenSDL()
 {
 	cout << "Destroy window " << endl;
 	SDL_DestroyRenderer(m_renderer);
@@ -36,71 +35,68 @@ EcranSDL::~EcranSDL()
 	SDL_Quit();
 }
 
-bool EcranSDL::effacer()
+bool ScreenSDL::clear()
 {
 	SDL_SetRenderDrawColor(m_renderer, 0, 255, 0, 255);
 	SDL_RenderClear(m_renderer);
 	return true;
 }
 
-bool EcranSDL::rafraichir()
+bool ScreenSDL::refresh()
 {
 	SDL_RenderPresent(m_renderer);
 
 	return true;
 }
 
-bool EcranSDL::recupererDimensions(int &x, int &y) const
+bool ScreenSDL::getDimensions(int &x, int &y) const
 {
-	/* getmaxyx(stdscr, x, y);*/
 	x = MAX_WIDTH - 1;
 	y = MAX_HEIGHT - 1;
 	return true;
 }
 
-Action EcranSDL::lireAction()
+Action ScreenSDL::getAction()
 {
-	/* on boucle jusqu'au timeout du select */
 	SDL_Event e;
 	static char * prev;
 
 	SDL_PollEvent(&e);
 
-	/* on execute l'action qu'on a trouvé pendant la période */
 	switch (e.type) {
 
 	case SDL_QUIT:
-		return Action::QUITTER;
+		return Action::QUIT;
 	case SDL_KEYDOWN:
 		switch (e.key.keysym.sym)
 		{
-			case SDLK_RIGHT: // Flèche droite
-				return Action::DROITE;
+			case SDLK_RIGHT: 
+				return Action::RIGHT;
 
-			case SDLK_LEFT: // Flèche gauche
-				return Action::GAUCHE;
+			case SDLK_LEFT:
+				return Action::LEFT;
 
-			case SDLK_SPACE: // demarrer
-				return Action::DEMARRER;
+			case SDLK_SPACE:
+			{
+				std::cout << "start" << std::endl;
+				return Action::START;
+			}
 
 			default:
-				return Action::AUCUNE;
+				return Action::NONE;
 		}
 		break;
 		
 	default:
 		{
-			return Action::AUCUNE;
-		/* rien pour l'instant */
+			return Action::NONE;
 		}
-
 	}
 
-
-	return Action::QUITTER;
+	return Action::QUIT;
 }
 
-bool EcranSDL::ajouterPixel(const Vecteur<int> &v, char pix, Couleur c)
+bool ScreenSDL::addPixel(const Vec2D<int> &v, char pix, Color c)
 {
 	return true;
 }

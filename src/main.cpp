@@ -1,32 +1,32 @@
 #include <stdlib.h>
 #include <string>
 
-#include <Strat/Niveau1.h>
-#include <Element/Brique.h>
-#include <Element/Canevas.h>
-#include <Ecran/EcranSDL.h>
+#include <Strat/Level1.h>
+#include <Element/Brick.h>
+#include <Element/Canvas.h>
+#include <Screen/ScreenSDL.h>
 
-#include <Physique/Physique2DFaibleRes.h>
+#include <Physic/Physic2DLowRes.h>
 
-#include <Jeu.h>
+#include <Game.h>
 
-using namespace cassebrique;
+using namespace breakout;
 
 int main(int argc, char **argv)
 {
-	EcranSDL ecran;
-	Niveau1 niveau1;
-	Physique2DFaibleRes physique;
+	ScreenSDL screen;
+	Level1 level1;
+	Physique2DLowRes physic;
 
-	Jeu jeu(ecran, physique);
-	jeu.demarrer(niveau1);
+	Game game(screen, physic);
+	game.start(level1);
 
 	Action action;
 	
 	do { 
-		action = ecran.lireAction();
-		jeu.afficher();
-	} while(jeu.executer(action));
+		action = screen.getAction();
+		game.show();
+	} while(game.execute(action));
 
 	return EXIT_SUCCESS;
 }

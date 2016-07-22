@@ -1,28 +1,28 @@
 #pragma once
 
-#include <Vecteur/Vecteur.h>
+#include <Geom/Vec2D.h>
 #include <Interface/Obstacle.h>
-#include <Couleur/Couleur.h>
+#include <Color/Color.h>
 
-namespace cassebrique
+namespace breakout
 {
 
-	enum class ElementType { ELEMENT, CANEVAS, BRIQUE, BRIQUE_INCASSABLE, RAQUETTE, BALLE };
+	enum class ElementType { ELEMENT, CANVAS, BRICK, BRICK_UNBROKABLE, RACKET, BALL };
 
 	class Element {
 		public:
-			Element(const Vecteur<int> &p);
+			Element(const Vec2D<int> &p);
 
-			void nouvellePosition(const Vecteur<int> &p);
-			Vecteur<int> recupererPosition(void) const;
+			void setPosition(const Vec2D<int> &p);
+			Vec2D<int> getPosition(void) const;
 
 			/* interface Obstacle */
-			virtual ObstacleResultat collision() const { return ObstacleResultat::INTACT; }
+			virtual ObstacleResult collision() const { return ObstacleResult::UNBROKEN; }
 
-			virtual Couleur recupererCouleur() const { return Couleur::BLANC; }
+			virtual Color getColor() const { return Color::WHITE; }
 			virtual ElementType type() const { return ElementType::ELEMENT; }
 
-		private: /* heritage : tant qu'on n'accede pas a position depuis une sous classe mais uniquement via ces accesseurs, pas besoin de private */
-			Vecteur<int> m_position;
+		private: 
+			Vec2D<int> m_position;
 	};
 };

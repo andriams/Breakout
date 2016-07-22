@@ -1,70 +1,67 @@
 
 #pragma once
 
-#include <Vecteur/Vecteur.h>
-#include <Ecran/Sprite.h>
-#include <Physique/Physique2D.h>
+#include <Geom/Vec2D.h>
+#include <Screen/Sprite.h>
+#include <Physic/Physic2D.h>
 
-namespace cassebrique {
+namespace breakout {
 
 template <typename P>
-bool testerDeplacement(const P &physique, Sprite *sprite, Vecteur<double> mouvement, Sprite **rencontre)
+bool testMovement(const P &physic, Sprite *sprite, Vec2D<double> movement, Sprite **meet)
 {
-	/* test si il n'y a pas de collision */
-	Vecteur<double> position  = sprite->recupererPosition();
+	/* test collision */
+	Vec2D<double> position  = sprite->getPosition();
 
-	Vecteur<int> prochaine_position = VecteurDoubleVersInt(position + mouvement);
+	Vec2D<int> next_position = Vec2DDoubleToInt(position + movement);
 
-	if (physique.collision(*sprite, prochaine_position, rencontre) == false) {
+	if (physic.collision(*sprite, next_position, meet) == false) {
 		return false;
 	}
 
-	/* on a une collision */
+	/* collision */
 	return true;
 }
 
 template <typename P, typename S>
-Vecteur<double> faireDeplacement(const P &physique, S *sprite, std::list<Sprite*> &collisions)
+Vec2D<double> moveSprite(const P &physic, S *sprite, std::list<Sprite*> &collisions)
 {
-	S *rencontre;
-	Vecteur<double> mouvement = sprite->recupererMouvement();
+	S *meet;
+	Vec2D<double> spriteMovement = sprite->getMovement();
 
-	/* on a une collision : inverser le déplacement */
-	/* il faut tester quel coordonnee a generer le rebond : 1 ou 2 */
+	/* collision : inverse movement */
 	double mv_x, mv_y;
-	mouvement.recupererCoordonnees(mv_x, mv_y);
+	spriteMovement.getCoord(mv_x, mv_y);
 
-	/* on teste d'abord X */
-	Vecteur<double> deplacement = Vecteur<double>(mv_x, 0);
-	if (testerDeplacement(physique, sprite, deplacement, &rencontre) == false) {
-		sprite->deplacer(deplacement);
+	/* test on X */
+	Vec2D<double> movement = Vec2D<double>(mv_x, 0);
+	if (testMovement(physic, sprite, movement, &meet) == false) {
+		sprite->move(movement);
 	} else {
-		/* on inverse et on gère la collision */
 		mv_x = -mv_x;
-		collisions.push_back(rencontre);
+		collisions.push_back(meet);
 	}
 
-	/* puis Y */
-	deplacement = Vecteur<double>(0, mv_y);
-	if (testerDeplacement(physique, sprite, deplacement, &rencontre) == false) {
-		sprite->deplacer(deplacement);
+	/* test on  Y */
+	movement = Vec2D<double>(0, mv_y);
+	if (testMovement(physic, sprite, movement, &meet) == false) {
+		sprite->move(movement);
 	} else {
-		/* on inverse et on gère la collision */
 		mv_y = -mv_y;
-		collisions.push_back(rencontre);
+		collisions.push_back(meet);
 	}
 
-	return Vecteur<double>(mv_x, mv_y);
+	return Vec2D<double>(mv_x, mv_y);
 }
 
 template <typename P>
-Vecteur<double> faireDeplacement(const P &physique, SpriteRaquette *sprite, std::list<Sprite*> &collisions)
+Vec2D<double> moveSprite(const P &physic, SpriteRacket *sprite, std::list<Sprite*> &collisions)
 {
-	Sprite *rencontre;
-	if (testerDeplacement(physique, sprite, sprite->recupererMouvement(), &rencontre) == false) {
-		sprite->deplacer(sprite->recupererMouvement());
+	Sprite *meet;
+	if (testMovement(physic, sprite, sprite->getMovement(), &meet) == false) {
+		sprite->move(sprite->getMovement());
 	}
-	return Vecteur<double>(0,0);
+	return Vec2D<double>(0,0);
 }
 
 };

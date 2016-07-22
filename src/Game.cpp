@@ -4,134 +4,129 @@
 
 using namespace breakout;
 
-bool Jeu::start(Niveau &niveau)
+bool Game::start(Level &level)
 {
 	int x, y;
 
-	m_ecran.init();
-	m_ecran.recupererDimensions(x, y);
+	m_screen.init();
+	m_screen.getDimensions(x, y);
 
-	/* creation du canevas */
-	if (m_sprite_factory.creer(m_canevas, &m_sprite_canevas) != true) {
+	/* creation of canvas */
+	if (m_sprite_factory.create(m_canvas, &m_sprite_canvas) != true) {
 		return false;
 	}
-	
-	/* définition des limites de l'aire de jeu dans le moteur de collision */
-	m_physique.canevas(m_sprite_canevas, 10, 10, x, y);
+	m_physic.canvas(m_sprite_canvas, 1, 1, x, y);
 
-	/* creation des briques */
-	for (Element *it : niveau) {
+	/* create bricks */
+	for (Element *it : level) {
 		Element &b = *it;
 		Sprite *s;
-		if (m_sprite_factory.creer(b, &s) == false) {
+		if (m_sprite_factory.create(b, &s) == false) {
 			return false;
 		}
-
 		m_sprites.push_back(s);
-		m_physique.ajouter(*s);
+		m_physic.add(*s);
 	}
 
-	/* création de la raquette et suivi de celle ci */
-	if (m_sprite_factory.creer(m_physique, m_raquette, (SpriteObserve**)&m_sprite_raquette) != true) {
+	/* create racket */
+	if (m_sprite_factory.create(m_physic, m_racket, (SpriteObserved **)&m_sprite_racket) != true) {
 		return false;
 	}
-	m_physique.ajouter(*m_sprite_raquette);
+	m_physic.add(*m_sprite_racket);
 
-	/* création de la balle */
-	if (m_sprite_factory.creer(m_balle, &m_sprite_balle) != true) {
+	/* create ball */
+	if (m_sprite_factory.create(m_ball, &m_sprite_ball) != true) {
 		return false;
 	}
 
-	m_niveau = &niveau;
+	m_level = &level;
 
 	return true;
 }
 
-bool Jeu::collision(Sprite *rencontre)
+bool Game::collision(Sprite *meet)
 {
-	switch (rencontre->element().collision()) {
-		case ObstacleResultat::INTACT:
+	switch (meet->element().collision()) {
+		case ObstacleResult::UNBROKEN:
 			return false;
 
-		case ObstacleResultat::DETRUIT:
-			/* l'objet doit etre détruit */
-			m_sprites.remove(rencontre); /* de la liste des choses affichées */
-			m_physique.detruire(*rencontre); /* du moteur de collision */
-			m_niveau->detruire(rencontre->element()); /* du niveau */
+		case ObstacleResult::BROKEN:
+			m_sprites.remove(meet); 
+			m_physic.del(*meet); 
+			m_level->del(meet->element());
 			return true;
 	}
 	return false;
 }
 
-bool Jeu::afficher()
+bool Game::show()
 {
-	m_ecran.effacer();
+	m_screen.clear();
 
-	m_sprite_canevas->afficher(m_ecran);
+	m_sprite_canvas->show(m_screen);
 	for (Sprite *s : m_sprites) {
-		s->afficher(m_ecran);
+		s->show(m_screen);
 	}
 
-	m_sprite_balle->afficher(m_ecran);
-	m_sprite_raquette->afficher(m_ecran);
+	m_sprite_ball->show(m_screen);
+	m_sprite_racket->show(m_screen);
 	
-	m_ecran.rafraichir();
+	m_screen.refresh();
 
 	return true;
 }
 
-bool Jeu::executer(Action action)
+bool Game::execute(Action action)
 {
 	std::list<Sprite*> collisions;
-	Vecteur<double> mouvement;
-	/* on execute l'action qu'on a trouvé pendant la période */
+	Vec2D<double> movement;
+
 	switch (action) {
-		case Action::DROITE:
-			m_sprite_raquette->nouveauMouvement(Vecteur<double>(5,0));
-			mouvement = faireDeplacement(m_physique, m_sprite_raquette, collisions);
-			m_sprite_raquette->nouveauMouvement(mouvement);
+		case Action::RIGHT:
+			m_sprite_racket->setMovement(Vec2D<double>(5,0));
+			movement = moveSprite(m_physic, m_sprite_racket, collisions);
+			m_sprite_racket->setMovement(movement);
 			break;
-		case Action::GAUCHE:
-			m_sprite_raquette->nouveauMouvement(Vecteur<double>(-5,0));
-			mouvement = faireDeplacement(m_physique, m_sprite_raquette, collisions);
-			m_sprite_raquette->nouveauMouvement(mouvement);
-			break;
-
-		case Action::DEMARRER:
-			/* lance la balle : démarre le jeu */
-			m_jeu_en_cours = true;
+		case Action::LEFT:
+			m_sprite_racket->setMovement(Vec2D<double>(-5, 0));
+			movement = moveSprite(m_physic, m_sprite_racket, collisions);
+			m_sprite_racket->setMovement(movement);
 			break;
 
-		case Action::QUITTER:
-			/* quitte le jeu */
+		case Action::START:
+			m_pending = true;
+			break;
+
+		case Action::QUIT:
 			return false;
 
-		case Action::AUCUNE:
+		case Action::NONE:
 			break;
 	}
 
-	/* on déplace la balle a chaque iteration */
-	if (m_jeu_en_cours) {
+	/* move ball at each iteration */
+	if (m_pending) {
+		//std::cout << "pending" << std::endl;
 		int ex, ey, bx, by, dimx, dimy;
-		m_ecran.recupererDimensions(ex, ey);
+		m_screen.getDimensions(ex, ey);
 
-		Vecteur<double> mouvement = faireDeplacement(m_physique, m_sprite_balle, collisions);
-		m_sprite_balle->nouveauMouvement(mouvement);
+		Vec2D<double> movement = moveSprite(m_physic, m_sprite_ball, collisions);
+		m_sprite_ball->setMovement(movement);
 
-		/* vérifier la sortie de la balle */
-		VecteurDoubleVersInt(m_sprite_balle->recupererPosition()).recupererCoordonnees(bx, by);
-		m_sprite_balle->recupererTaille().recupererCoordonnees(dimx, dimy);
+		/* check ball is out */
+		Vec2DDoubleToInt(m_sprite_ball->getPosition()).getCoord(bx, by);
+		m_sprite_ball->getSize().getCoord(dimx, dimy);
 		if (by == ey - dimy - 1) {
 			return false;
 		}
 
 		if (collisions.size()) {
-			/* on a eu une collision */
+			/* collision */
 			for (auto sprite : collisions) {
 				collision(sprite);
 			}
 
-			if (m_niveau->estTermine() == true) {
+			if (m_level->isEnding() == true) {
 				return false;
 			}
 		}

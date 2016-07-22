@@ -1,28 +1,27 @@
 #pragma once
 
 #include <SDL.h>
-#include <Ecran/Ecran.h>
-#include <Vecteur/Vecteur.h>
-#include <Couleur/Couleur.h>
-//#include <Ecran/SpriteSDL.h>
+#include <Screen/Screen.h>
+#include <Geom/Vec2D.h>
+#include <Color/Color.h>
 
-namespace cassebrique {
+namespace breakout {
 
 #define MAX_WIDTH 640
 #define MAX_HEIGHT 480
 
-	enum EcranCouleur : short int { COULEUR_AUCUNE, COULEUR_BLANC, COULEUR_BLEU, COULEUR_ROUGE };
+	enum ScreenColor : short int { COLOR_NONE, COLOR_WHITE, COLOR_BLUE, COLOR_RED };
 
-	class EcranSDL : public Ecran {
+	class ScreenSDL : public Screen {
 	public:
-		EcranSDL();
-		~EcranSDL();
+		ScreenSDL();
+		~ScreenSDL();
 		void init() override;
-		bool effacer() override;
-		bool rafraichir() override;
-		Action lireAction() override;
-		bool recupererDimensions(int &x, int &y) const override;
-		bool ajouterPixel(const Vecteur<int> &v, char pix, Couleur c) override;
+		bool clear() override;
+		bool refresh() override;
+		Action getAction() override;
+		bool getDimensions(int &x, int &y) const override;
+		bool addPixel(const Vec2D<int> &v, char pix, Color c) override;
 		void *renderer() override { return m_renderer; }
 	private:
 		SDL_Window *m_win;

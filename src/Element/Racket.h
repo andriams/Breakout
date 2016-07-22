@@ -3,13 +3,13 @@
 
 #include <Element/Element.h>
 
-namespace cassebrique
+namespace breakout
 {
-	class Raquette : public Element {
+	class Racket : public Element {
 		public:
-			Raquette() : Element(Vecteur<int>(10, 10)) {}
-			Raquette(const Vecteur<int> &v) : Element(v) {}
-			ElementType type() const override { return ElementType::RAQUETTE; }
+			Racket() : Element(Vec2D<int>(10, 10)) {}
+			Racket(const Vec2D<int> &v) : Element(v) {}
+			ElementType type() const override { return ElementType::RACKET; }
 
 	};
 

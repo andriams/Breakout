@@ -1,45 +1,45 @@
 
-#include <Ecran/SpriteSDL.h>
-#include <Couleur/Couleur.h>
+#include <Screen/SpriteSDL.h>
+#include <Color/Color.h>
 #include <math.h>
 #include <iostream>
 
-using namespace cassebrique;
+using namespace breakout;
 
-#define VECTEUR_MOUVEMENT_BALLE Vecteur<double>(-1.5, -4) // deplacement en cases par 1/24e de secondes
-#define VECTEUR_POSITION_BALLE  Vecteur<double>(210, 200) // deplacement en cases par 1/24e de secondes
-#define VECTEUR_TAILLE_BALLE    Vecteur<int>(10, 10) // deplacement en cases par 1/24e de secondes
+#define VECT_MOV_BALL Vec2D<double>(0.75, -2) 
+#define VECT_POS_BALL  Vec2D<double>(210, 200) 
+#define VECT_SIZE_BALL    Vec2D<int>(10, 10) 
 
-#define VECTEUR_POSITION_RAQUETTE  Vecteur<double>(300, 380) // deplacement en cases par 1/24e de secondes
-#define TAILLE_RAQUETTE 40
-#define VECTEUR_TAILLE_RAQUETTE  Vecteur<int>(TAILLE_RAQUETTE, 10) // deplacement en cases par 1/24e de secondes
+#define VECT_POS_RACKET  Vec2D<double>(300, 380) 
+#define SIZE_RACKET 40
+#define VECT_SIZE_RACKET  Vec2D<int>(SIZE_RACKET, 10)
 
 
-namespace cassebrique {
+namespace breakout {
 
-	static Vecteur<double> positionElementVersPositionSprite(const Vecteur<int> &v)
+	static Vec2D<double> positionElementToPositionSprite(const Vec2D<int> &v)
 	{
 		int x,y;
-		v.recupererCoordonnees(x, y);
-		return Vecteur<double>(x*40, y*30);
+		v.getCoord(x, y);
+		return Vec2D<double>(x*40, y*30);
 	}
 }
 
 /* brique */
 SpriteBriqueSDL::SpriteBriqueSDL(Element &b) : 
-	Sprite(positionElementVersPositionSprite(b.recupererPosition()),
-               Vecteur<int>(30,20), b), m_couleur(b.recupererCouleur()) 
+	Sprite(positionElementToPositionSprite(b.getPosition()),
+               Vec2D<int>(30,20), b), m_color(b.getColor()) 
 {
 }
 
-bool SpriteBriqueSDL::afficher(Ecran &e)
+bool SpriteBriqueSDL::show(Screen &e)
 {
-	Vecteur<double> position = recupererPosition();
+	Vec2D<double> position = getPosition();
 	double posx, posy;
-	position.recupererCoordonnees(posx, posy);
+	position.getCoord(posx, posy);
 	
 	rect = { posx, posy, 30, 20 };
-	if (element().recupererCouleur() == Couleur::BLANC)
+	if (element().getColor() == Color::WHITE)
 		SDL_SetRenderDrawColor((SDL_Renderer *)e.renderer(), 255, 255, 255, 255);
 	else
 		SDL_SetRenderDrawColor((SDL_Renderer *)e.renderer(), 255, 0, 0, 255);
@@ -48,17 +48,17 @@ bool SpriteBriqueSDL::afficher(Ecran &e)
 	return true;
 }
 
-/* raquette */
-SpriteRaquetteSDL::SpriteRaquetteSDL(SpriteObservateur &o, Element &r) :
-	SpriteRaquette(o, VECTEUR_POSITION_RAQUETTE, VECTEUR_TAILLE_RAQUETTE, r) {}
+/* racket */
+SpriteRacketSDL::SpriteRacketSDL(SpriteObserver &o, Element &r) :
+	SpriteRacket(o, VECT_POS_RACKET, VECT_SIZE_RACKET, r) {}
 
-bool SpriteRaquetteSDL::afficher(Ecran &e)
+bool SpriteRacketSDL::show(Screen &e)
 {
-	Vecteur<double> position = recupererPosition();
+	Vec2D<double> position = getPosition();
 	double posx, posy;
-	position.recupererCoordonnees(posx, posy);
+	position.getCoord(posx, posy);
 	int tx, ty;
-	recupererTaille().recupererCoordonnees(tx, ty);
+	getSize().getCoord(tx, ty);
 	rect = { posx, posy, tx, ty };
 
 	SDL_SetRenderDrawColor((SDL_Renderer *)e.renderer(), 0, 255, 255, 255);
@@ -67,18 +67,18 @@ bool SpriteRaquetteSDL::afficher(Ecran &e)
 	return true;
 }
 
-/* balle */
-SpriteBalleSDL::SpriteBalleSDL(Element &b) :
-	Sprite(VECTEUR_POSITION_BALLE, VECTEUR_TAILLE_BALLE, b)
+/* ball */
+SpriteBallSDL::SpriteBallSDL(Element &b) :
+	Sprite(VECT_POS_BALL, VECT_SIZE_BALL, b)
 {
-	nouveauMouvement(VECTEUR_MOUVEMENT_BALLE);
+	setMovement(VECT_MOV_BALL);
 }
 
-bool SpriteBalleSDL::afficher(Ecran &e)
+bool SpriteBallSDL::show(Screen &e)
 {
-	Vecteur<double> position = recupererPosition();
+	Vec2D<double> position = getPosition();
 	double posx, posy;
-	position.recupererCoordonnees(posx, posy);
+	position.getCoord(posx, posy);
 	rect = { posx, posy, 10, 10 };
 
 	SDL_SetRenderDrawColor((SDL_Renderer *)e.renderer(), 0, 0, 255, 255);
@@ -88,30 +88,30 @@ bool SpriteBalleSDL::afficher(Ecran &e)
 }
 
 /* canevas */
-SpriteCanevasSDL::SpriteCanevasSDL(Element &c) :
-	Sprite(Vecteur<double>(0,0), Vecteur<int>(MAX_WIDTH-1, MAX_HEIGHT-1), c) {}
+SpriteCanvasSDL::SpriteCanvasSDL(Element &c) :
+	Sprite(Vec2D<double>(0,0), Vec2D<int>(MAX_WIDTH, MAX_HEIGHT), c) {}
 
-bool SpriteCanevasSDL::afficher(Ecran &e)
+bool SpriteCanvasSDL::show(Screen &e)
 {
-	rect = { 0, 0, MAX_WIDTH-1, MAX_HEIGHT-1 };
+	rect = { 0, 0, MAX_WIDTH, MAX_HEIGHT };
 
 	SDL_SetRenderDrawColor((SDL_Renderer *)e.renderer(), 0, 0, 0, 255);
 	SDL_RenderFillRect((SDL_Renderer *)e.renderer(), &rect);
 	return true;
 }
 
-bool SpriteSDLFactory::creer(Element &e, Sprite **s)
+bool SpriteSDLFactory::create(Element &e, Sprite **s)
 {
 	switch (e.type()) {
-		case ElementType::BRIQUE:
-		case ElementType::BRIQUE_INCASSABLE:
+		case ElementType::BRICK:
+		case ElementType::BRICK_UNBROKABLE:
 			*s = new SpriteBriqueSDL(e);
 			break;
-		case ElementType::BALLE:
-			*s = new SpriteBalleSDL(e);
+		case ElementType::BALL:
+			*s = new SpriteBallSDL(e);
 			break;
-		case ElementType::CANEVAS:
-			*s = new SpriteCanevasSDL(e);
+		case ElementType::CANVAS:
+			*s = new SpriteCanvasSDL(e);
 			break;
 		default:
 			return false;
@@ -121,11 +121,11 @@ bool SpriteSDLFactory::creer(Element &e, Sprite **s)
 	return true;
 }
 
-bool SpriteSDLFactory::creer(SpriteObservateur &o, Element &e, SpriteObserve **s)
+bool SpriteSDLFactory::create(SpriteObserver &o, Element &e, SpriteObserved **s)
 {
 	switch (e.type()) {
-		case ElementType::RAQUETTE:
-			*s = new SpriteRaquetteSDL(o, e);
+		case ElementType::RACKET:
+			*s = new SpriteRacketSDL(o, e);
 			break;
 		default:
 			return false;

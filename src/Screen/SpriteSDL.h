@@ -2,46 +2,45 @@
 #pragma once
 
 #include <list>
-#include <Ecran/Sprite.h>
-#include <Ecran/EcranSDL.h>
+#include <Screen/Sprite.h>
+#include <Screen/ScreenSDL.h>
 
-namespace cassebrique {
+namespace breakout {
 
 	class SpriteBriqueSDL : public Sprite {
 		public:
 			SpriteBriqueSDL(Element &b);
-			bool afficher(Ecran &)override;
+			bool show(Screen &)override;
 		private:
-			const Couleur m_couleur;
+			const Color m_color;
 			SDL_Rect rect;
 	};
 
-	class SpriteBalleSDL : public Sprite {
+	class SpriteBallSDL : public Sprite {
 		public:
-			SpriteBalleSDL(Element &b);
-			bool afficher(Ecran &) override;
+			SpriteBallSDL(Element &b);
+			bool show(Screen &) override;
 		private:
 			SDL_Rect rect;
 	};
 
-	class SpriteCanevasSDL : public Sprite {
+	class SpriteCanvasSDL : public Sprite {
 		public:
-			SpriteCanevasSDL(Element &c);
-			bool afficher(Ecran &) override;
+			SpriteCanvasSDL(Element &c);
+			bool show(Screen &) override;
 		private:
 			SDL_Rect rect;
 	};
 
-	/* la raquette est observée */
-	class SpriteRaquetteSDL : public SpriteRaquette {
+	/* the racket is oberved */
+	class SpriteRacketSDL : public SpriteRacket {
 		public:
-			SpriteRaquetteSDL(SpriteObservateur &o, Element &r);
-			bool afficher(Ecran &) override;
+			SpriteRacketSDL(SpriteObserver &o, Element &r);
+			bool show(Screen &) override;
 		private:
 			SDL_Rect rect;
 	};
 
-	/* pourrait etre un singleton et une classe générique SpriteFactory */
 	class SpriteSDLFactory {
 		public:
 			SpriteSDLFactory() { m_list.clear(); }
@@ -49,9 +48,9 @@ namespace cassebrique {
 				for (Sprite *s : m_list) { delete s; } m_list.clear();
 			}
 
-			bool creer(Element &e, Sprite **s);
-			bool creer(SpriteObservateur &o, Element &e, SpriteObserve **s);
-			bool detruire(Sprite *s) { m_list.remove(s); delete s; return true; }
+			bool create(Element &e, Sprite **s);
+			bool create(SpriteObserver &o, Element &e, SpriteObserved **s);
+			bool destroy(Sprite *s) { m_list.remove(s); delete s; return true; }
 
 		private:
 			std::list<Sprite*> m_list;

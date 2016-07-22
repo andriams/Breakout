@@ -1,11 +1,11 @@
 #include <Interface/Obstacle.h>
 
-namespace cassebrique {
-	std::string ObstacleResultatVersString(ObstacleResultat r) {
+namespace breakout {
+	std::string ObstacleResultToString(ObstacleResult r) {
 		switch(r) {
-			case ObstacleResultat::INTACT: return "INTACT";
-			case ObstacleResultat::DETRUIT: return "DETRUIT";
+			case ObstacleResult::UNBROKEN: return "UNBROKEN";
+			case ObstacleResult::BROKEN: return "BROKEN";
 		}
-		return "ERREUR";
+		return "ERROR";
 	}
 }

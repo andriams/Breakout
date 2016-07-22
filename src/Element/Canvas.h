@@ -1,11 +1,11 @@
 
 #pragma once
 
-namespace cassebrique
+namespace breakout
 {
-	class Canevas : public Element {
+	class Canvas : public Element {
 		public:
-			Canevas() : Element(Vecteur<int>(0,0)) {}
-			ElementType type() const override { return ElementType::CANEVAS; }
+			Canvas() : Element(Vec2D<int>(0,0)) {}
+			ElementType type() const override { return ElementType::CANVAS; }
 	};
 }
